@@ -1,14 +1,35 @@
-import { createContext, FunctionComponent, useContext, useState } from 'react';
+'use client';
+import {
+  createContext,
+  FunctionComponent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { createDefaultState, Web3State } from './utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Web3Context = createContext<any>(null);
+const Web3Context = createContext<Web3State>(createDefaultState());
 
 interface Web3ProviderProps {
   children: React.ReactNode;
 }
 
 const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
-  const [web3Api, setWeb3Api] = useState({ test: ' Hello provider!' });
+  const [web3Api, setWeb3Api] = useState<Web3State>(createDefaultState());
+
+  useEffect(() => {
+    function initWeb3() {
+      setWeb3Api({
+        ethereum: window.ethereum,
+        provider: null,
+        contract: null,
+        isLoading: false,
+      });
+    }
+
+    initWeb3();
+  }, []);
 
   return (
     <Web3Context.Provider value={web3Api}>{children}</Web3Context.Provider>
