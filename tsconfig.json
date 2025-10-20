@@ -23,7 +23,9 @@
       "@/*": ["./*"],
       "@ui": ["components/ui"],
       "@ui/*": ["components/ui/*"],
-      "@_types/*":["types/*"]
+      "@providers": ["providers"],
+      "@providers/*": ["providers*"],
+      "@_types/*": ["types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
