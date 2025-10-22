@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import { createDefaultState, Web3State } from './utils';
+import { BrowserProvider } from 'ethers/providers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Web3Context = createContext<Web3State>(createDefaultState());
@@ -20,6 +21,9 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
 
   useEffect(() => {
     function initWeb3() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const provider = new BrowserProvider(window.ethereum as any);
+
       setWeb3Api({
         ethereum: window.ethereum,
         provider: null,
