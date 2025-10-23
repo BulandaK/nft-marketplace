@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { createDefaultState, Web3State } from './utils';
+import { createDefaultState, loadContract, Web3State } from './utils';
 import { BrowserProvider } from 'ethers/providers';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,14 +20,15 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
   const [web3Api, setWeb3Api] = useState<Web3State>(createDefaultState());
 
   useEffect(() => {
-    function initWeb3() {
+    async function initWeb3() {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const provider = new BrowserProvider(window.ethereum as any);
+      const contract = await loadContract("NftMarket",provider);
 
       setWeb3Api({
         ethereum: window.ethereum,
-        provider: null,
-        contract: null,
+        provider,
+        contract,
         isLoading: false,
       });
     }
