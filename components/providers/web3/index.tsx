@@ -21,6 +21,7 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
 
   useEffect(() => {
     async function initWeb3() {
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const provider = new BrowserProvider(window.ethereum as any);
       const contract = await loadContract("NftMarket",provider);
