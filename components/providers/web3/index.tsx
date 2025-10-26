@@ -9,7 +9,6 @@ import {
 import { createDefaultState, loadContract, Web3State } from './utils';
 import { BrowserProvider } from 'ethers/providers';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const Web3Context = createContext<Web3State>(createDefaultState());
 
 interface Web3ProviderProps {
@@ -24,7 +23,7 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
       await window.ethereum.request({ method: 'eth_requestAccounts' });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const provider = new BrowserProvider(window.ethereum as any);
-      const contract = await loadContract("NftMarket",provider);
+      const contract = await loadContract('NftMarket', provider);
 
       setWeb3Api({
         ethereum: window.ethereum,
