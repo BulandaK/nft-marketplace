@@ -1,3 +1,5 @@
+import { setupHooks, Web3Hooks } from '@/components/hooks/web3/setupHooks';
+import { Web3Dependencies } from '@/types/hook';
 import { MetaMaskInpageProvider } from '@metamask/providers';
 import { Contract, ethers } from 'ethers';
 import { BrowserProvider } from 'ethers';
@@ -8,15 +10,14 @@ declare global {
   }
 }
 
-export type Web3Params = {
-  ethereum: MetaMaskInpageProvider | null;
-  provider: BrowserProvider | null;
-  contract: Contract | null;
+type Nullable<T> = {
+  [P in keyof T]: T[P] | null;
 };
 
 export type Web3State = {
   isLoading: boolean;
-} & Web3Params;
+  hooks: Web3Hooks;
+} & Nullable<Web3Dependencies>;
 
 export const createDefaultState = () => {
   return {
@@ -24,6 +25,23 @@ export const createDefaultState = () => {
     provider: null,
     contract: null,
     isLoading: true,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    hooks: setupHooks({} as any),
+  };
+};
+
+export const createWeb3State = ({
+  ethereum,
+  provider,
+  contract,
+  isLoading,
+}: Web3Dependencies & { isLoading: boolean }) => {
+  return {
+    ethereum,
+    provider,
+    contract,
+    isLoading,
+    hooks: setupHooks({ ethereum, provider, contract }),
   };
 };
 

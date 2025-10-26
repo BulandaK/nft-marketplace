@@ -1,9 +1,14 @@
 import { CryptoHookFactory } from "@/types/hook";
 import useSWR from "swr";
 
-//deps -> provider, ethereum, conttract (web3State)
+
+type AccountHookFactory = CryptoHookFactory<string,string>;
+
+
+
+export type UseAccountHook = ReturnType<AccountHookFactory>
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const hookFactory: CryptoHookFactory<string,string> = (deps:any) =>(params:any)=>{
+export const hookFactory: AccountHookFactory = (deps:any) =>(params:any)=>{
     const swrRes =useSWR("web3/useAccount",()=>{
        console.log(deps);
        console.log(params);
