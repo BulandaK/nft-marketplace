@@ -26,19 +26,31 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
 
   useEffect(() => {
     async function initWeb3() {
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const provider = new BrowserProvider(window.ethereum as any);
-      const contract = await loadContract('NftMarket', provider);
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const provider = new BrowserProvider(window.ethereum as any);
+        const contract = await loadContract('NftMarket', provider);
 
-      setWeb3Api(
-        createWeb3State({
-          ethereum: window.ethereum,
-          provider,
-          contract,
-          isLoading: false,
-        })
-      );
+        setWeb3Api(
+          createWeb3State({
+            ethereum: window.ethereum,
+            provider,
+            contract,
+            isLoading: false,
+          })
+        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
+        console.error('please install web3 wallet');
+        setWeb3Api((api) =>
+          createWeb3State({
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            ...(api as any),
+            isLoading: false,
+          })
+        );
+      }
     }
 
     initWeb3();
@@ -53,7 +65,7 @@ export function useWeb3() {
   return useContext(Web3Context);
 }
 
-export function useHooks(){
+export function useHooks() {
   const { hooks } = useWeb3();
   return hooks;
 }
