@@ -7,12 +7,21 @@ type AccountHookFactory = CryptoHookFactory<string>;
 
 
 export type UseAccountHook = ReturnType<AccountHookFactory>
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const hookFactory: AccountHookFactory = ({provider}) =>(params)=>{
+
+export const hookFactory: AccountHookFactory = ({provider}) =>()=>{
     const swrRes =useSWR(
         provider? "web3/useAccount" : null,
-        () =>{
-            return "Test User"
+        async () =>{
+            const accounts = await provider!.listAccounts()
+            const account = accounts[0].address;
+
+            if(!account){
+                throw "Cannot retreive account! Please, connect to web3 wallet."
+            }
+            return account;
+        },
+        {
+            revalidateOnFocus:false
         }
     )
 
