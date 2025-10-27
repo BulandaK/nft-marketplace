@@ -1,8 +1,11 @@
 import { CryptoHookFactory } from '@/types/hook';
+import { useEffect } from 'react';
 import useSWR from 'swr';
 
 type UseAccountResponse = {
   connect: () => void;
+  isLoading: boolean;
+  isInstalled: boolean;
 };
 
 type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>;
@@ -10,9 +13,9 @@ type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>;
 export type UseAccountHook = ReturnType<AccountHookFactory>;
 
 export const hookFactory: AccountHookFactory =
-  ({ provider, ethereum }) =>
+  ({ provider, ethereum, isLoading }) =>
   () => {
-    const swrRes = useSWR(
+    const { data, mutate, isValidating, ...swr } = useSWR(
       provider ? 'web3/useAccount' : null,
       async () => {
         const accounts = await provider!.listAccounts();
@@ -28,17 +31,39 @@ export const hookFactory: AccountHookFactory =
       }
     );
 
+    useEffect(() => {
+      ethereum?.on('accountsChanged', handleAccountsChanged);
+      return () => {
+        ethereum?.removeListener('accountsChanged', handleAccountsChanged);
+      };
+    }, [ethereum]);
+
+    const handleAccountsChanged = (...args: unknown[]) => {
+      const accounts = args[0] as string[];
+      if (accounts.length === 0) {
+        console.error('Please, connect to Web3 wallet');
+      } else if (accounts[0] !== data) {
+        mutate(accounts[0]);
+      }
+    };
+
     const connect = async () => {
       try {
         console.log('wykonuje sie connect');
-        ethereum?.request({ method: 'eth_requestAccounts' });
+        await ethereum?.request({ method: 'eth_requestAccounts' });
+        console.log('Connected successfully!');
       } catch (e) {
         console.log(e);
       }
     };
 
     return {
-      ...swrRes,
+      ...swr,
+      data,
+      isValidating,
+      isLoading: isLoading || isValidating,
+      isInstalled: ethereum?.isMetaMask || false,
+      mutate,
       connect,
     };
   };
