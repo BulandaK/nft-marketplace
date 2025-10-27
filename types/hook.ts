@@ -16,7 +16,7 @@ export type CryptoHookFactory<D = any, P = any> = {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CryptoHandlerHook<D = any, P = any> = (
-  params: P
+  params?: P
 ) => CryptoSWRResponse<D>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
