@@ -5,7 +5,7 @@ import { Fragment } from 'react';
 import { Button, Disclosure, Menu, Transition } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
-import { useAccount } from '@/components/hooks/web3';
+import { useAccount, useNetwork } from '@/components/hooks/web3';
 import Walletbar from './Walletbar';
 
 const navigation = [
@@ -19,7 +19,9 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
   const { account } = useAccount();
+  const {network }= useNetwork();
 
+console.log(network)
 
 
   return (
