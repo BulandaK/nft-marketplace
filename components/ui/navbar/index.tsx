@@ -19,16 +19,15 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
   const { account } = useAccount();
-  const {network }= useNetwork();
+  const { network } = useNetwork();
 
-console.log(network)
-
+  console.log(network.data);
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
         <>
-        {account.data}
+          {account.data}
           <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
             <div className="relative flex items-center justify-between h-16">
               <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
@@ -79,12 +78,24 @@ console.log(network)
                   <BellIcon className="h-6 w-6" aria-hidden="true" />
                 </button>
 
-                  <Walletbar 
+                <div className="text-gray-300 self-center mr-2">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-purple-100 text-purple-800">
+                    <svg
+                      className="-ml-0.5 mr-1.5 h-2 w-2 text-indigo-400"
+                      fill="currentColor"
+                      viewBox="0 0 8 8"
+                    >
+                      <circle cx={4} cy={4} r={3} />
+                    </svg>
+                    {network.data}
+                  </span>
+                </div>
+                <Walletbar
                   isInstalled={account.isInstalled}
                   isLoading={account.isLoading}
                   connect={account.connect}
                   account={account.data}
-                  />
+                />
               </div>
             </div>
           </div>
