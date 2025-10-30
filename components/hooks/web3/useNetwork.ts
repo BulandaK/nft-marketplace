@@ -13,7 +13,12 @@ const NETWORKS: { [k: string]: string } = {
 
 type UseNetworkResponse = {
   isLoading: boolean;
+  isSupported: boolean;
+  targetNetwork: string;
 };
+
+const targetId = process.env.NEXT_PUBLIC_TARGET_CHAIN_ID as string;
+const targetNetwork = NETWORKS[targetId];
 
 type NetworkHookFactory = CryptoHookFactory<string, UseNetworkResponse>;
 
@@ -26,7 +31,7 @@ export const hookFactory: NetworkHookFactory =
       provider ? 'web3/useNetwork' : null,
       async () => {
         const chainId = (await provider!.getNetwork()).chainId;
-        debugger;
+
         if (!chainId) {
           throw 'Cannot retreive network. Please, refresh browser or connect to other one.';
         }
@@ -44,6 +49,8 @@ export const hookFactory: NetworkHookFactory =
       ...swr,
       data,
       isValidating,
+      targetNetwork,
+      isSupported: data === targetNetwork,
       isLoading: isLoading || isValidating,
     };
   };
