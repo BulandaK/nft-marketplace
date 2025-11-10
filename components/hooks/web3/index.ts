@@ -5,15 +5,24 @@ export const useAccount = () => {
   const swrRes = hooks.useAccount();
 
   return {
-    account: swrRes
-  }
-}
+    account: swrRes,
+  };
+};
 
 export const useNetwork = () => {
   const hooks = useHooks();
   const swrRes = hooks.useNetwork();
 
   return {
-    network: swrRes
-  }
-}
+    network: swrRes,
+  };
+};
+
+export const useListedNfts = () => {
+  const hooks = useHooks();
+  const swrRes = hooks.useListedNfts();
+
+  return {
+    nfts: swrRes,
+  };
+};
