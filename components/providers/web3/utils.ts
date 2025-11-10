@@ -1,8 +1,8 @@
 import { setupHooks, Web3Hooks } from '@/components/hooks/web3/setupHooks';
 import { Web3Dependencies } from '@/types/hook';
 import { MetaMaskInpageProvider } from '@metamask/providers';
-import { Contract, ethers } from 'ethers';
-import { BrowserProvider } from 'ethers';
+import { Contract, ethers, providers } from 'ethers';
+// import { BrowserProvider } from 'ethers';
 
 declare global {
   interface Window {
@@ -49,7 +49,7 @@ const NETWORK_ID = process.env.NEXT_PUBLIC_NETWORK_ID;
 
 export const loadContract = async (
   name: string,
-  provider: BrowserProvider
+  provider: providers.Web3Provider
 ): Promise<Contract> => {
   // debugger;
   if (!NETWORK_ID) {

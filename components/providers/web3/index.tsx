@@ -12,8 +12,10 @@ import {
   loadContract,
   Web3State,
 } from './utils';
-import { BrowserProvider } from 'ethers/providers';
+import {ethers } from 'ethers'
+// import { BrowserProvider } from 'ethers';
 import { MetaMaskInpageProvider } from '@metamask/providers';
+import { NftMarketContract } from '@/types/nftMarketContract';
 
 const pageReload = () => {
   window.location.reload();
@@ -52,7 +54,7 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
       try {
         // await window.ethereum.request({ method: 'eth_requestAccounts' });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const provider = new BrowserProvider(window.ethereum as any);
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
         const contract = await loadContract('NftMarket', provider);
 
         setGlobalListeners(window.ethereum);
@@ -60,7 +62,7 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
           createWeb3State({
             ethereum: window.ethereum,
             provider,
-            contract,
+            contract: contract as unknown as NftMarketContract,
             isLoading: false,
           })
         );
