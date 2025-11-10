@@ -1,70 +1,67 @@
-import { CryptoHookFactory } from '@/types/hook';
-import { useEffect } from 'react';
-import useSWR from 'swr';
+
+import { CryptoHookFactory } from "@/types/hook";
+import { useEffect } from "react";
+import useSWR from "swr";
 
 type UseAccountResponse = {
   connect: () => void;
   isLoading: boolean;
   isInstalled: boolean;
-};
+}
 
-type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>;
+type AccountHookFactory = CryptoHookFactory<string, UseAccountResponse>
 
-export type UseAccountHook = ReturnType<AccountHookFactory>;
+export type UseAccountHook = ReturnType<AccountHookFactory>
 
-export const hookFactory: AccountHookFactory =
-  ({ provider, ethereum, isLoading }) =>
-  () => {
-    const { data, mutate, isValidating, ...swr } = useSWR(
-      provider ? 'web3/useAccount' : null,
-      async () => {
-        const accounts = await provider!.listAccounts();
-        const account = accounts[0].address;
+export const hookFactory: AccountHookFactory = ({provider, ethereum, isLoading}) => () => {
+  const {data, mutate, isValidating, ...swr} = useSWR(
+    provider ? "web3/useAccount" : null,
+    async () => {
+      const accounts = await provider!.listAccounts();
+      const account = accounts[0];
 
-        if (!account) {
-          throw 'Cannot retreive account! Please, connect to web3 wallet.';
-        }
-        return account;
-      },
-      {
-        revalidateOnFocus: false,
-        shouldRetryOnError: false
+      if (!account) {
+        throw "Cannot retreive account! Please, connect to web3 wallet."
       }
-    );
 
-    useEffect(() => {
-      ethereum?.on('accountsChanged', handleAccountsChanged);
-      return () => {
-        ethereum?.removeListener('accountsChanged', handleAccountsChanged);
-      };
-    }, [ethereum]);
+      return account;
+    }, {
+      revalidateOnFocus: false,
+      shouldRetryOnError: false
+    }
+  )
 
-    const handleAccountsChanged = (...args: unknown[]) => {
-      const accounts = args[0] as string[];
-      if (accounts.length === 0) {
-        console.error('Please, connect to Web3 wallet');
-      } else if (accounts[0] !== data) {
-        mutate(accounts[0]);
-      }
-    };
+  useEffect(() => {
+    ethereum?.on("accountsChanged", handleAccountsChanged);
+    return () => {
+      ethereum?.removeListener("accountsChanged", handleAccountsChanged);
+    }
+  })
 
-    const connect = async () => {
-      try {
-        console.log('wykonuje sie connect');
-        await ethereum?.request({ method: 'eth_requestAccounts' });
-        console.log('Connected successfully!');
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  const handleAccountsChanged = (...args: unknown[]) => {
+    const accounts = args[0] as string[];
+    if (accounts.length === 0) {
+      console.error("Please, connect to Web3 wallet");
+    } else if (accounts[0] !== data) {
+      mutate(accounts[0]);
+    }
+  }
 
-    return {
-      ...swr,
-      data,
-      isValidating,
-      isLoading: isLoading as boolean,
-      isInstalled: ethereum?.isMetaMask || false,
-      mutate,
-      connect,
-    };
+  const connect = async () => {
+    try {
+      ethereum?.request({method: "eth_requestAccounts"});
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  return {
+    ...swr,
+    data,
+    isValidating,
+    isLoading: isLoading as boolean,
+    isInstalled: ethereum?.isMetaMask || false,
+    mutate,
+    connect
   };
+}

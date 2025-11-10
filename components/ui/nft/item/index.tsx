@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { NftMeta } from '@/types/nft';
+import { NftMeta,Nft } from '@/types/nft';
 import { FunctionComponent } from 'react';
 
 type NftItemProps = {
-  item: NftMeta;
+  item: Nft;
 };
 
 const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
@@ -12,7 +12,7 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
       <div className="flex-shrink-0">
         <img
           className={`h-full w-full object-cover`}
-          src={item.image}
+          src={item.meta.image}
           alt="New NFT"
         />
       </div>
@@ -20,9 +20,9 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
         <div className="flex-1">
           <p className="text-sm font-medium text-indigo-600">Creatures NFT</p>
           <div className="block mt-2">
-            <p className="text-xl font-semibold text-gray-900">{item.name}</p>
+            <p className="text-xl font-semibold text-gray-900">{item.meta.name}</p>
             <p className="mt-3 mb-3 text-base text-gray-500">
-              {item.description}
+              {item.meta.description}
             </p>
           </div>
         </div>
@@ -44,7 +44,7 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
                 </div>
               </dd>
             </div>
-            {item.attributes.map((attr) => (
+            {item.meta.attributes.map((attr) => (
               <div className="flex flex-col px-4 pt-4" key={attr.trait_type}>
                 <dt className="order-2 text-sm font-medium text-gray-500">
                   {attr.trait_type}

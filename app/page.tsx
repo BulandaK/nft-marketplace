@@ -3,6 +3,7 @@ import { NFTList } from '@/components/ui';
 import { NftMeta } from '@/types/nft';
 import { useWeb3 } from '@/components/providers/web3';
 import { useListedNfts } from '@/components/hooks/web3';
+import { Nft } from '@_types/nft';
 
 
 export default function Home() {
@@ -24,7 +25,7 @@ export default function Home() {
             Mint a NFT to get unlimited ownership forever!
           </p>
         </div>
-        <NFTList nfts={nfts?.data} />
+        <NFTList nfts={nfts.data as Nft[]} />
       </div>
     </div>
   );
