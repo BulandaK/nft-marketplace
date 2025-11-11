@@ -1,15 +1,7 @@
 'use client';
 import { NFTList } from '@/components/ui';
-import { NftMeta } from '@/types/nft';
-import { useWeb3 } from '@/components/providers/web3';
-import { useListedNfts } from '@/components/hooks/web3';
-import { Nft } from '@_types/nft';
-
 
 export default function Home() {
-  const { nfts } = useListedNfts();
-
-  console.log(nfts.data);
 
   return (
     <div className="relative bg-gray-50 pt-16 pb-20 px-4 sm:px-6 lg:pt-24 lg:pb-28 lg:px-8">
@@ -25,7 +17,7 @@ export default function Home() {
             Mint a NFT to get unlimited ownership forever!
           </p>
         </div>
-        <NFTList nfts={nfts.data as Nft[]} />
+        <NFTList  />
       </div>
     </div>
   );

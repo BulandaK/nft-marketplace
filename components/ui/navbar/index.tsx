@@ -1,8 +1,8 @@
 'use client';
 /* eslint-disable @next/next/no-img-element */
 
-import { Fragment } from 'react';
-import { Button, Disclosure, Menu, Transition } from '@headlessui/react';
+
+import { Disclosure } from '@headlessui/react';
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import Link from 'next/link';
 import { useAccount, useNetwork } from '@/components/hooks/web3';

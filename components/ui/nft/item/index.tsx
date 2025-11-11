@@ -1,12 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
-import { NftMeta,Nft } from '@/types/nft';
+import { Nft } from '@/types/nft';
 import { FunctionComponent } from 'react';
 
 type NftItemProps = {
   item: Nft;
+  buyNft: (token: number, value: number) => Promise<void>;
 };
 
-const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
+const NFTItem: FunctionComponent<NftItemProps> = ({ item, buyNft }) => {
   return (
     <>
       <div className="flex-shrink-0">
@@ -20,7 +21,9 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
         <div className="flex-1">
           <p className="text-sm font-medium text-indigo-600">Creatures NFT</p>
           <div className="block mt-2">
-            <p className="text-xl font-semibold text-gray-900">{item.meta.name}</p>
+            <p className="text-xl font-semibold text-gray-900">
+              {item.meta.name}
+            </p>
             <p className="mt-3 mb-3 text-base text-gray-500">
               {item.meta.description}
             </p>
@@ -58,6 +61,9 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
         </div>
         <div>
           <button
+            onClick={() => {
+              buyNft(item.tokenId, item.price);
+            }}
             type="button"
             className="disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none disabled:cursor-not-allowed mr-2 inline-flex items-center px-4 py-2 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >

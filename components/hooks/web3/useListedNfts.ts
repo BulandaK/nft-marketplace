@@ -1,42 +1,61 @@
-import { CryptoHookFactory } from '@/types/hook';
-import { Nft } from '@_types/nft';
-import { ethers } from 'ethers';
-import useSWR from 'swr';
 
-type UseListedNftsResponse = object;
-type ListedNftsHookFactory = CryptoHookFactory<Nft[], UseListedNftsResponse>;
+import { CryptoHookFactory } from "@_types/hook";
+import { Nft } from "@_types/nft";
+import { ethers } from "ethers";
+import useSWR from "swr";
 
-export type UseListedNftsHook = ReturnType<ListedNftsHookFactory>;
+type UseListedNftsResponse = {
+  buyNft: (token: number, value: number) => Promise<void>
+}
+type ListedNftsHookFactory = CryptoHookFactory<Nft[], UseListedNftsResponse>
 
-export const hookFactory: ListedNftsHookFactory =
-  ({ contract }) =>
-  () => {
-    const { data, ...swr } = useSWR(
-      contract ? 'web3/useListedNfts' : null,
-      async () => {
-        const nfts = [] as Nft[];
-        const coreNfts = await contract!.getAllNftsOnSale();
+export type UseListedNftsHook = ReturnType<ListedNftsHookFactory>
 
-        for (let i = 0; i < coreNfts.length; i++) {
-          const item = coreNfts[i];
-          const tokenURI = await contract!.tokenURI(item.tokenId);
-          const metaRes = await fetch(tokenURI);
-          const meta = await metaRes.json();
+export const hookFactory: ListedNftsHookFactory = ({contract}) => () => {
+  const {data, ...swr} = useSWR(
+    contract ? "web3/useListedNfts" : null,
+    async () => {
+      const nfts = [] as Nft[];
+      const coreNfts = await contract!.getAllNftsOnSale();
 
-          nfts.push({
-            price: parseFloat(ethers.utils.formatEther(item.price)),
-            tokenId: item.tokenId.toNumber(),
-            creator: item.creator,
-            isListed: item.isListed,
-            meta,
-          });
-        }
+      for (let i = 0; i < coreNfts.length; i++) {
+        const item = coreNfts[i];
+        const tokenURI = await contract!.tokenURI(item.tokenId);
+        const metaRes = await fetch(tokenURI);
+        const meta = await metaRes.json();
 
-        return nfts;
+        nfts.push({
+          price: parseFloat(ethers.utils.formatEther(item.price)),
+          tokenId: item.tokenId.toNumber(),
+          creator: item.creator,
+          isListed: item.isListed,
+          meta
+        })
       }
-    );
-    return {
-      ...swr,
-      data: data || [],
-    };
+      
+      return nfts;
+    }
+  )
+
+  const buyNft = async (tokenId: number, value: number) => {
+    try {
+      await contract?.buyNft(
+        tokenId, {
+          value: ethers.utils.parseEther(value.toString())
+        }
+      )
+
+      alert("You have bought Nft. See profile page.")
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      console.error(e.message);
+    }
+  }
+
+
+  return {
+    ...swr,
+    buyNft,
+    data: data || [],
   };
+}
