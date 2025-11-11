@@ -34,7 +34,7 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item }) => {
               </dt>
               <dd className="order-1 text-xl font-extrabold text-indigo-600">
                 <div className="flex justify-center items-center">
-                  100
+                  {item.price}
                   <img
                     className="h-6"
                     src="/images/small-eth.webp"
