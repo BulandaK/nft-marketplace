@@ -6,8 +6,7 @@ import { ChangeEvent, useState } from 'react';
 import { Switch } from '@headlessui/react';
 import Link from 'next/link';
 import { NftMeta } from '@/types/nft';
-
-const ATTRIBUTES = ['health', 'attack', 'speed'];
+import axios from 'axios';
 
 const NftCreate: NextPage = () => {
   const [nftURI, setNftURI] = useState('');
@@ -32,16 +31,23 @@ const NftCreate: NextPage = () => {
 
   const handleAttributeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const attributeIdx = nftMeta.attributes.findIndex(attr => attr.trait_type === name);
+    const attributeIdx = nftMeta.attributes.findIndex(
+      (attr) => attr.trait_type === name
+    );
 
     nftMeta.attributes[attributeIdx].value = value;
     setNftMeta({
       ...nftMeta,
-      attributes: nftMeta.attributes
-    })
-  }
-  const createNft = () => {
-    console.log(nftMeta);
+      attributes: nftMeta.attributes,
+    });
+  };
+  const createNft = async () => {
+    try {
+      const messageToSign = await axios.get('/api/verify');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      console.error(e.message);
+    }
   };
   return (
     <div>
@@ -198,7 +204,6 @@ const NftCreate: NextPage = () => {
                         rows={3}
                         className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                         placeholder="Some nft description..."
-                        defaultValue={''}
                       />
                     </div>
                     <p className="mt-2 text-sm text-gray-500">
