@@ -31,6 +31,24 @@ const NftCreate: NextPage = () => {
     setNftMeta({ ...nftMeta, [name]: value });
   };
 
+  const getSignedData = async () => {
+    const messageToSign = await axios.get('/api/verify');
+    const accounts = (await ethereum?.request({
+      method: 'eth_requestAccounts',
+    })) as string[];
+    const account = accounts[0];
+
+    const signedData = await ethereum?.request({
+      method: 'personal_sign',
+      params: [
+        JSON.stringify(messageToSign.data),
+        account,
+        messageToSign.data.id,
+      ],
+    });
+
+    return { signedData, account };
+  };
   const handleAttributeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const attributeIdx = nftMeta.attributes.findIndex(
@@ -43,22 +61,35 @@ const NftCreate: NextPage = () => {
       attributes: nftMeta.attributes,
     });
   };
+  const handleImage = async (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      console.error('Select a file');
+      return;
+    }
+
+    const file = e.target.files[0];
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    try {
+      const { signedData, account } = await getSignedData();
+      
+      await axios.post('/api/verify-image', {
+        address: account,
+        signature: signedData,
+        bytes,
+        contentType: file.type,
+        fileName: file.name.replace(/\.[^/.]+$/, ''),
+      });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      console.error(e.message);
+    }
+  };
+
   const createNft = async () => {
     try {
-      const messageToSign = await axios.get('/api/verify');
-      const accounts = (await ethereum?.request({
-        method: 'eth_requestAccounts',
-      })) as string[];
-      const account = accounts[0];
-
-      const signedData = await ethereum?.request({
-        method: 'personal_sign',
-        params: [
-          JSON.stringify(messageToSign.data),
-          account,
-          messageToSign.data.id,
-        ],
-      });
+      const { signedData, account } = await getSignedData();
 
       await axios.post('/api/verify', {
         address: account,
@@ -66,12 +97,12 @@ const NftCreate: NextPage = () => {
         nft: nftMeta,
       });
 
-
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e.message);
     }
   };
+
   return (
     <div>
       <div className="py-4">
@@ -268,6 +299,7 @@ const NftCreate: NextPage = () => {
                             >
                               <span>Upload a file</span>
                               <input
+                                onChange={handleImage}
                                 id="file-upload"
                                 name="file-upload"
                                 type="file"
