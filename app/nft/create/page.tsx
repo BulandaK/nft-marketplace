@@ -5,7 +5,7 @@ import { ChangeEvent, useState } from 'react';
 
 import { Switch } from '@headlessui/react';
 import Link from 'next/link';
-import { NftMeta } from '@/types/nft';
+import { NftMeta, PinataRes } from '@/types/nft';
 import axios from 'axios';
 import { useWeb3 } from '@/components/providers/web3';
 
@@ -62,7 +62,7 @@ const NftCreate: NextPage = () => {
     });
   };
   const handleImage = async (e: ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || e.target.files.length ===0) {
+    if (!e.target.files || e.target.files.length === 0) {
       console.error('Select a file');
       return;
     }
@@ -73,15 +73,20 @@ const NftCreate: NextPage = () => {
 
     try {
       const { signedData, account } = await getSignedData();
-      
-      const res =await axios.post('/api/verify-image', {
+
+      const res = await axios.post('/api/verify-image', {
         address: account,
         signature: signedData,
         bytes,
         contentType: file.type,
         fileName: file.name.replace(/\.[^/.]+$/, ''),
       });
-      console.log(res.data)
+      const data = res.data as PinataRes;
+
+      setNftMeta({
+        ...nftMeta,
+        image: `${process.env.NEXT_PUBLIC_PINATA_DOMAIN}/ipfs/${data.IpfsHash}`,
+      });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e.message);
@@ -266,12 +271,8 @@ const NftCreate: NextPage = () => {
                     </p>
                   </div>
                   {/* Has Image? */}
-                  {false ? (
-                    <img
-                      src="https://eincode.mypinata.cloud/ipfs/QmaQYCrX9Fg2kGijqapTYgpMXV7QPPzMwGrSRfV9TvTsfM/Creature_1.png"
-                      alt=""
-                      className="h-40"
-                    />
+                  {nftMeta.image ? (
+                    <img src={nftMeta.image} alt="nft image" className="h-40" />
                   ) : (
                     <div>
                       <label className="block text-sm font-medium text-gray-700">
