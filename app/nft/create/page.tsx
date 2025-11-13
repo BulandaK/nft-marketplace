@@ -66,7 +66,7 @@ const NftCreate: NextPage = () => {
         nft: nftMeta,
       });
 
-      console.log(signedData);
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e.message);
