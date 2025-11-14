@@ -9,12 +9,15 @@ import { NftMeta, PinataRes } from '@/types/nft';
 import axios from 'axios';
 import { useWeb3 } from '@/components/providers/web3';
 import { ethers } from 'ethers';
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
+import { useNetwork } from '@/components/hooks/web3';
+import { ExclamationIcon } from '@heroicons/react/solid';
 const ALLOWED_FIELDS = ['name', 'description', 'image', 'attributes'];
 
 const NftCreate: NextPage = () => {
   const { ethereum, contract } = useWeb3();
   const [nftURI, setNftURI] = useState('');
+  const { network } = useNetwork();
   const [price, setPrice] = useState('');
   const [hasURI, setHasURI] = useState(false);
   const [nftMeta, setNftMeta] = useState<NftMeta>({
@@ -85,13 +88,11 @@ const NftCreate: NextPage = () => {
         contentType: file.type,
         fileName: file.name.replace(/\.[^/.]+$/, ''),
       });
-      const res = await toast.promise(
-        promise, {
-          pending: "Uploading image",
-          success: "Image uploaded",
-          error: "Image upload error"
-        }
-      )
+      const res = await toast.promise(promise, {
+        pending: 'Uploading image',
+        success: 'Image uploaded',
+        error: 'Image upload error',
+      });
       const data = res.data as PinataRes;
 
       setNftMeta({
@@ -114,13 +115,11 @@ const NftCreate: NextPage = () => {
         nft: nftMeta,
       });
 
-      const res = await toast.promise(
-        promise, {
-          pending: "Uploading metadata",
-          success: "Metadata uploaded",
-          error: "Metadata upload error"
-        }
-      )
+      const res = await toast.promise(promise, {
+        pending: 'Uploading metadata',
+        success: 'Metadata uploaded',
+        error: 'Metadata upload error',
+      });
 
       const data = res.data as PinataRes;
       setNftURI(
@@ -146,26 +145,50 @@ const NftCreate: NextPage = () => {
         }
       });
 
-       const tx = await contract?.mintToken(
+      const tx = await contract?.mintToken(
         nftURI,
-        ethers.utils.parseEther(price), {
-          value: ethers.utils.parseEther(0.025.toString())
+        ethers.utils.parseEther(price),
+        {
+          value: ethers.utils.parseEther((0.025).toString()),
         }
       );
 
-      await toast.promise(
-        tx!.wait(), {
-          pending: "Uploading metadata",
-          success: "Metadata uploaded",
-          error: "Metadata upload error"
-        }
-      );
+      await toast.promise(tx!.wait(), {
+        pending: 'Uploading metadata',
+        success: 'Metadata uploaded',
+        error: 'Metadata upload error',
+      });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e.message);
     }
   };
-
+  if (!network.isConnectedToNetwork) {
+    return (
+      <div className="rounded-md bg-yellow-50 p-4 mt-10">
+        <div className="flex">
+          <div className="flex-shrink-0">
+            <ExclamationIcon
+              className="h-5 w-5 text-yellow-400"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="ml-3">
+            <h3 className="text-sm font-medium text-yellow-800">
+              Attention needed
+            </h3>
+            <div className="mt-2 text-sm text-yellow-700">
+              <p>
+                {network.isLoading
+                  ? 'Loading...'
+                  : `Connect to ${network.targetNetwork}`}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div>
       <div className="py-4">
