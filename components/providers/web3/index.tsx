@@ -54,7 +54,8 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
       try {
         // await window.ethereum.request({ method: 'eth_requestAccounts' });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any, "any");
+        provider.pollingInterval = 10000;
         const contract = await loadContract('NftMarket', provider);
 
         const signer = provider.getSigner();

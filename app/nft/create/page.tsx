@@ -134,10 +134,13 @@ const NftCreate: NextPage = () => {
 
   const createNft = async () => {
     try {
-      const nftRes = await axios.get(nftURI, {
-        headers: { Accept: 'text/plain' },
-      });
-      const content = nftRes.data;
+      // const nftRes = await axios.get(nftURI, {
+      //   headers: { Accept: 'text/plain' },
+      // });
+      // const content = nftRes.data;
+
+      const nftRes= await fetch(`/api/fetch?fetchUrl=${nftURI}`);
+      const content = await nftRes.json();
 
       Object.keys(content).forEach((key) => {
         if (!ALLOWED_FIELDS.includes(key)) {
@@ -154,9 +157,9 @@ const NftCreate: NextPage = () => {
       );
 
       await toast.promise(tx!.wait(), {
-        pending: 'Uploading metadata',
-        success: 'Metadata uploaded',
-        error: 'Metadata upload error',
+        pending: 'Minting NFT token!',
+        success: 'NFT Created!',
+        error: 'Minting error',
       });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
