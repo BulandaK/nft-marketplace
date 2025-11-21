@@ -30568,12 +30568,12 @@
         }
       },
       "links": {},
-      "address": "0x6aD247Ab9397b99a82B7fc3F402f3086a137662E",
-      "transactionHash": "0xcb4dd5148519c49ce425fec95f33f1c7f14d90144f1526f8630ae99984e61313"
+      "address": "0x501d0147BB8ef448ba3E51fa99d396a9B47C7c0d",
+      "transactionHash": "0x9ad5f9c1bf3504b4e3f2839bbb468a8c7a14aa84fc399fc9d40167797d31cf3d"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-11-10T14:36:29.019Z",
+  "updatedAt": "2025-11-20T22:59:03.839Z",
   "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",

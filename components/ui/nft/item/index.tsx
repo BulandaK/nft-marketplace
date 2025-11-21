@@ -8,6 +8,14 @@ type NftItemProps = {
 };
 
 const NFTItem: FunctionComponent<NftItemProps> = ({ item, buyNft }) => {
+  const carbonAttr = item.meta.attributes.find(
+    (a) => a.trait_type === 'carbon_footprint'
+  );
+
+  const visibleAttributes = item.meta.attributes.filter(
+    (a) => a.trait_type !== 'carbon_footprint'
+  );
+
   return (
     <>
       <div className="flex-shrink-0">
@@ -27,6 +35,11 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item, buyNft }) => {
             <p className="mt-3 mb-3 text-base text-gray-500">
               {item.meta.description}
             </p>
+            {carbonAttr && (
+              <div className="mt-2 text-sm text-gray-600">
+                Carbon footprint: <span className="font-medium text-gray-900">{carbonAttr.value}</span>
+              </div>
+            )}
           </div>
         </div>
         <div className="overflow-hidden mb-4">
@@ -47,7 +60,7 @@ const NFTItem: FunctionComponent<NftItemProps> = ({ item, buyNft }) => {
                 </div>
               </dd>
             </div>
-            {item.meta.attributes.map((attr) => (
+            {visibleAttributes.map((attr) => (
               <div className="flex flex-col px-4 pt-4" key={attr.trait_type}>
                 <dt className="order-2 text-sm font-medium text-gray-500">
                   {attr.trait_type}
